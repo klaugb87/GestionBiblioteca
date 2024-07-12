@@ -198,23 +198,8 @@ public class Principal {
 								System.out.println("\nInserta la fecha de inicio del prestamo| Formato de fecha: anio-mes-dia ej: 2024-07-11");
 								String fechaIni = scanner.nextLine();
 								System.out.println("fecha=" + fechaIni);
-								try 
-								{
-									String fecha = "'" + fechaIni + "'";
-								}
-								catch (Exception exception) {
-									System.out.println("La fecha no es válida, por favor ingresa el formato válido");
-								} 
 								System.out.println("\nInserta la fecha de inicio del prestamo| Formato de fecha: anio-mes-dia ej: 2024-07-11");
 								String fechaFin = scanner.nextLine();
-								try 
-								{
-									String fecha = "'" + fechaIni + "'";
-									//System.out.println(fecha);
-								}
-								catch (Exception exception) {
-									System.out.println("La fecha no es válida, por favor ingresa el formato válido");
-								} 
 								Prestamos.registrarPrestamo(idLibro,fechaIni,fechaFin,idUsu);
 								break;
 							case 2:
