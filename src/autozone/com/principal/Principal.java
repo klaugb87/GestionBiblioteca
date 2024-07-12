@@ -218,20 +218,23 @@ public class Principal {
 								Prestamos.registrarPrestamo(idLibro,fechaIni,fechaFin,idUsu);
 								break;
 							case 2:
-								System.out.println("\nUsuarios:");
+								//registrar la devolucion
+								System.out.println("\nUsuarios: ");
 								Usuarios.obtenerUsuarios();
-								System.out.println("\nLibros:");
+								System.out.println("\nLibros: ");
 								Inventario.obtenerLibros();
+								System.out.println("\nPrestamos actuales: ");
+								Prestamos.obtenerPrestamos();
 								System.out.println("\nSelecciona el id del libro a devolver");
 					        	int ISBN = scanner.nextInt();
 					        	scanner.nextLine();
-					        	System.out.println("\nInserta la fecha de inicio del prestamo");
-								System.out.println("\nFormato de fecha: anio-mes-dia ej: 2024-07-11");
+					        	//Se toma fecha de hoy para la devolucion
 								LocalDate FechaDevolucion = LocalDate.now();
 					        	System.out.println("\nSelecciona el id del usuario que devuelve");
 					        	int idUsuario = scanner.nextInt();
 					        	DateTimeFormatter FormatoFecha = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 					        	String fechaFormateada = FechaDevolucion.format(FormatoFecha);
+					        	System.out.println(fechaFormateada);
 					        	Prestamos.registraDevolucion(ISBN,fechaFormateada, idUsuario);
 								break;
 							case 3:
@@ -244,9 +247,9 @@ public class Principal {
 								break;
 							case 4:
 								//Consulta disponibilidad de un libro
-								System.out.println("\n ¿Cuál campo quieres buscar para buscar a un usuario?");
-								System.out.println("\n 1. ID Usuario");
-								System.out.println("\n 2. Nombre");
+								System.out.println("\nLibros: ");
+								Inventario.obtenerLibros();
+								System.out.println("\n Digita el ID del libro a consultar su disponibilidad");
 					        	int ISBN_4 = scanner.nextInt();
 					        	scanner.nextLine();
 					        	Prestamos.consultaDisponibilidadLibro(ISBN_4);
@@ -276,7 +279,6 @@ public class Principal {
 
 	}
 		scanner.close();
-}
-	
+	}
 }
 	
