@@ -27,3 +27,10 @@ CREATE TABLE PRESTAMOS (
 );
 
 SELECT * FROM PRESTAMOS;
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `inserta_libro`(
+titulo_2 char(110), 
+autor_2 char(100))
+BEGIN
+INSERT INTO INVENTARIO (titulo, autor) VALUES (titulo_2, autor_2);
+END
