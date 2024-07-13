@@ -35,7 +35,7 @@ BEGIN
 DELETE FROM INVENTARIO WHERE ISBN= ISBN_2;
 END
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `inserta_libro`(
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_inserta_libro`(
 titulo_2 char(110), 
     autor_2 char(100))
 BEGIN
