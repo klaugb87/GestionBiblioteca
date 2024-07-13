@@ -51,7 +51,7 @@ public class Principal {
 							break;
 						case 2:
 							Inventario.obtenerLibros();
-							//poner logica para obtener id titulo y autor de scanner
+							//ACTUALIZAR LIBRO
 							System.out.println("\nSelecciona el id del libro a actualizar");
 				        	int idISBN = scanner.nextInt();
 				        	scanner.nextLine();
@@ -59,7 +59,7 @@ public class Principal {
 				        	String nTitulo = scanner.nextLine();
 				        	System.out.println("\nTeclea el nuevo autor del libro");
 				        	String nAutor = scanner.nextLine();
-							Inventario.actualizaLibro(idISBN,nTitulo,nAutor);
+							Inventario.actualizaLibro(nTitulo,nAutor,idISBN);
 							break;
 						case 3:
 							//eliminar libro
@@ -134,7 +134,7 @@ public class Principal {
 									Usuarios.actualizaUsuario(idUsuario, nombreUsuario);
 									break;
 								case 3:
-									//eliminar libro
+									//eliminar usuario
 									Usuarios.obtenerUsuarios();
 									System.out.println("\nSelecciona el id del usuario a eliminar");
 						        	int id = scanner.nextInt();
@@ -227,7 +227,9 @@ public class Principal {
 								System.out.println("\nUsuarios:");
 								Usuarios.obtenerUsuarios();
 								System.out.println("\nSelecciona el id del usuario a buscar");
-					        	int idUsuario_3 = scanner.nextInt();					        	
+					        	int idUsuario_3 = scanner.nextInt();
+					        	scanner.nextLine();
+					        	System.out.println("id_user" + idUsuario_3);
 					        	Prestamos.obtenerPrestamosPorUsuario(idUsuario_3);
 								break;
 							case 4:
@@ -239,6 +241,7 @@ public class Principal {
 					        	scanner.nextLine();
 					        	Prestamos.consultaDisponibilidadLibro(ISBN_4);
 								break;
+								
 							case 5:
 								break;
 								}

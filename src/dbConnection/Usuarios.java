@@ -1,70 +1,65 @@
 package dbConnection;
 
+import java.sql.CallableStatement;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 
 
 public class Usuarios {
     public static void eliminarUsuario(int id) {
-        try (Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/DB_BIBLIOTECA", "root", "Autumn!87"))
+    	try(Connection connection = DBConnection.getInstance().getConnection())
         {        	
-            final String ELIMINAR_USUARIO_SQL = "DELETE FROM USUARIOS WHERE ID_USUARIO =" +id ;
-            PreparedStatement preparedStatement2 = connection.prepareStatement(ELIMINAR_USUARIO_SQL); {
-        	}
-            int rowsDeleted = preparedStatement2.executeUpdate();
-            if (rowsDeleted != 0) {
-                System.out.println("Usuario eliminado exitosamente");
-            } else {
-                System.out.println("No se pudo eliminar el usuario seleccionado");
-            }
+            final String ELIMINAR_USUARIO_SQL = "CALL sp_eliminaUsuario(?)";
+            CallableStatement statement = connection.prepareCall(ELIMINAR_USUARIO_SQL);
+            statement.setInt(1, id);
+            statement.execute();
+            System.out.println("Usuario eliminado exitosamente");
         } catch (SQLException e) {
-            e.printStackTrace();
+        	System.out.println("Fallo al conectar a la base de datos");
+ 			e.printStackTrace();
         }
     }
     public static void obtenerUsuarios() {
-    	final String OBTENER_USUARIO_SQL = "SELECT * FROM USUARIOS";
-        try (Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/DB_BIBLIOTECA", "root", "Autumn!87");
-        	Statement st = connection.createStatement();
-        	PreparedStatement preparedStatement = connection.prepareStatement(OBTENER_USUARIO_SQL)) {
-        	ResultSet rs = preparedStatement.executeQuery();
+    	final String OBTENER_USUARIO_SQL = "CALL sp_muestraUsuarios";
+    	try(Connection connection = DBConnection.getInstance().getConnection()){
+    		CallableStatement statement = connection.prepareCall(OBTENER_USUARIO_SQL);
+        	ResultSet rs = statement.executeQuery();
             while (rs.next()) {
                 System.out.println(rs.getInt(2) + " " + rs.getString(1));
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+        	System.out.println("Fallo al conectar a la base de datos");
+ 			e.printStackTrace();
         }
     }
     public static void actualizaUsuario(int idUsuario, String nombreUsuario) {
-        try (Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/DB_BIBLIOTECA", "root", "Autumn!87"))
+    	try(Connection connection = DBConnection.getInstance().getConnection())
         {
-            final String ACTUALIZAR_USUARIO_SQL = "UPDATE USUARIOS SET nombre = ? WHERE ID_USUARIO = ?";
-            PreparedStatement preparedStatement2 = connection.prepareStatement(ACTUALIZAR_USUARIO_SQL); {
-            preparedStatement2.setString(1, nombreUsuario);
-            preparedStatement2.setInt(2, idUsuario);
+            final String ACTUALIZAR_USUARIO_SQL = "CALL sp_actualizaUsuario(?,?)";
+            CallableStatement statement = connection.prepareCall(ACTUALIZAR_USUARIO_SQL); {
+            statement.setString(1, nombreUsuario);
+            statement.setInt(2, idUsuario);
         	}
-            int rowAffected2 = preparedStatement2.executeUpdate();
-            System.out.println("Rows affected: " + rowAffected2);
+            statement.execute();
+            System.out.println("El usuario se actualizo correctamente ");
         } catch (SQLException e) {
-            e.printStackTrace();
+        	System.out.println("Fallo al conectar a la base de datos");
+ 			e.printStackTrace();
         }
     }
 
     public static void insertaUsuario(String nombre) {
-    	final String INSERTAR_LIBRO_SQL = "INSERT INTO USUARIOS (nombre) VALUES (?)";
-        try (Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/DB_BIBLIOTECA", "root", "Autumn!87");
-             PreparedStatement preparedStatement = connection.prepareStatement(INSERTAR_LIBRO_SQL)) {
-
-            preparedStatement.setString(1, nombre);
-
-            int rowAffected = preparedStatement.executeUpdate();
-            System.out.println(rowAffected + "Registro exitoso del usuario");
-
+    	final String INSERTAR_LIBRO_SQL = "CALL sp_insertaUsuario(?)";
+    	try(Connection connection = DBConnection.getInstance().getConnection();
+    		CallableStatement statement = connection.prepareCall(INSERTAR_LIBRO_SQL)) {
+    		statement.setString(1, nombre);
+            statement.execute();
+            System.out.println("Registro exitoso del usuario");
         } catch (SQLException e) {
-            e.printStackTrace();
+        	System.out.println("Fallo al conectar a la base de datos");
+ 			e.printStackTrace();
         }
     }
     
@@ -73,7 +68,7 @@ public class Usuarios {
     	if(ID ==0 && nombre != "") {
     		BUSCAR_USUARIO = "SELECT * FROM USUARIOS WHERE nombre LIKE '%" + nombre + "%'";}
 
-        try (Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/DB_BIBLIOTECA", "root", "Autumn!87");
+    	try(Connection connection = DBConnection.getInstance().getConnection();
             PreparedStatement preparedStatement = connection.prepareStatement(BUSCAR_USUARIO)) {
         	System.out.println("Resultados--->");
         	ResultSet rs = preparedStatement.executeQuery();
@@ -81,7 +76,8 @@ public class Usuarios {
                 System.out.println("|ID Usuario= " + rs.getInt(2) + " |Nombre= " + rs.getString(1));
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+        	System.out.println("Fallo al conectar a la base de datos");
+ 			e.printStackTrace();
         }
     }
     

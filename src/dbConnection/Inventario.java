@@ -1,71 +1,73 @@
 package dbConnection;
 
+import java.sql.CallableStatement;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
+
 public class Inventario {
     public static void eliminarLibro(int idISBN) {
-        try (Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/DB_BIBLIOTECA", "root", "Autumn!87"))
+    	try(Connection connection = DBConnection.getInstance().getConnection())
         {        	
-            final String ELIMINAR_LIBRO_SQL_2 = "DELETE FROM INVENTARIO WHERE ISBN =" +idISBN ;
-            PreparedStatement preparedStatement2 = connection.prepareStatement(ELIMINAR_LIBRO_SQL_2); {
-        	}
-            int rowsDeleted = preparedStatement2.executeUpdate();
-            if (rowsDeleted != 0) {
-                System.out.println("Libro eliminado exitosamente");
-            } else {
-                System.out.println("No se pudo eliminar el libro seleccionado");
+            final String ELIMINAR_LIBRO_SQL = "CALL sp_elimina_libro(?)";
+            {
+            CallableStatement statement = connection.prepareCall(ELIMINAR_LIBRO_SQL);
+            statement.setInt(1, idISBN);
+            statement.execute();
+            System.out.println("Libro eliminado exitosamente");
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+        	System.out.println("Fallo al conectar a la base de datos");
+			e.printStackTrace();
         }
     }
     public static void obtenerLibros() {
-    	final String CONSULTAR_LIBRO_SQL_1 = "SELECT * FROM INVENTARIO";
-        try (Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/DB_BIBLIOTECA", "root", "Autumn!87");
+    	final String CONSULTAR_LIBRO_SQL_1 = "CALL sp_muestraLibros";
+    	try(Connection connection = DBConnection.getInstance().getConnection();
         	Statement st = connection.createStatement();
-        	PreparedStatement preparedStatement = connection.prepareStatement(CONSULTAR_LIBRO_SQL_1)) {
-        	ResultSet rs = preparedStatement.executeQuery();
+    		CallableStatement statement = connection.prepareCall(CONSULTAR_LIBRO_SQL_1)) {
+        	ResultSet rs = statement.executeQuery();
             while (rs.next()) {
                 System.out.println(rs.getInt(3) + " " + rs.getString(1)+ " " + rs.getString(2));
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+        	System.out.println("Fallo al conectar a la base de datos");
+			e.printStackTrace();
         }
     }
-    public static void actualizaLibro(int idISBN, String nTitulo, String nAutor) {
-        try (Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/DB_BIBLIOTECA", "root", "Autumn!87"))
+    public static void actualizaLibro(String nTitulo, String nAutor,int idISBN) {
+    	try(Connection connection = DBConnection.getInstance().getConnection())
         {
-            final String ACTUALIZAR_LIBRO_SQL_2 = "UPDATE INVENTARIO SET autor = ? , titulo = ? WHERE ISBN = ?";
-            PreparedStatement preparedStatement2 = connection.prepareStatement(ACTUALIZAR_LIBRO_SQL_2); {
-            preparedStatement2.setString(1, nTitulo);
-            preparedStatement2.setString(2, nAutor);
-            preparedStatement2.setInt(3, idISBN);
+            final String ACTUALIZAR_LIBRO_SQL_2 = "CALL sp_actualizaLibro(?,?,?) ";
+            CallableStatement statement = connection.prepareCall(ACTUALIZAR_LIBRO_SQL_2); {
+            statement.setString(1, nTitulo);
+            statement.setString(2, nAutor);
+            statement.setInt(3, idISBN);
         	}
-            int rowAffected2 = preparedStatement2.executeUpdate();
-            System.out.println("Rows affected: " + rowAffected2);
+            statement.execute();
+            System.out.println("El registro se actualizo correctamente ");
         } catch (SQLException e) {
-            e.printStackTrace();
+        	System.out.println("Fallo al conectar a la base de datos");
+			e.printStackTrace();
         }
     }
 
     public static void insertarLibro(String titulo, String autor) {
-    	final String INSERTAR_LIBRO_SQL = "INSERT INTO INVENTARIO (titulo, autor) VALUES (?, ?)";
-        try (Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/DB_BIBLIOTECA", "root", "Autumn!87");
-             PreparedStatement preparedStatement = connection.prepareStatement(INSERTAR_LIBRO_SQL)) {
-
-            preparedStatement.setString(1, titulo);
-            preparedStatement.setString(2, autor);
-
-            int rowAffected = preparedStatement.executeUpdate();
-            System.out.println(rowAffected + "Registro exitoso");
+    	final String INSERTAR_LIBRO_SQL = "CALL sp_inserta_libro(?,?)";
+    	try(Connection connection = DBConnection.getInstance().getConnection())
+            {
+        	CallableStatement statement = connection.prepareCall(INSERTAR_LIBRO_SQL);
+        	statement.setString(1, titulo);
+        	statement.setString(2, autor);
+            statement.execute();
+            System.out.println("Registro exitoso");
 
         } catch (SQLException e) {
-            e.printStackTrace();
+        	System.out.println("Fallo al conectar a la base de datos");
+			e.printStackTrace();
         }
     }
     
@@ -76,7 +78,7 @@ public class Inventario {
     	else if(autor != "") {
     		BUSCAR_LIBROS = "SELECT * FROM INVENTARIO WHERE autor LIKE '%" + autor + "%'";
     	}
-        try (Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/DB_BIBLIOTECA", "root", "Autumn!87");
+    	try(Connection connection = DBConnection.getInstance().getConnection();
             PreparedStatement preparedStatement = connection.prepareStatement(BUSCAR_LIBROS)) {
         	System.out.println("Resultados--->");
         	ResultSet rs = preparedStatement.executeQuery();
@@ -84,7 +86,8 @@ public class Inventario {
                 System.out.println("|ID= " + rs.getInt(3) + " |Titulo= " + rs.getString(1) + " |Autor= " + rs.getString(2));
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+        	System.out.println("Fallo al conectar a la base de datos");
+			e.printStackTrace();
         }
     }
     
