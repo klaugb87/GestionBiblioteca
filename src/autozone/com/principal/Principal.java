@@ -22,7 +22,7 @@ public class Principal {
 				System.out.println("\nSelecciona una opción válida");
 				System.out.println("1. Inventario de libros");
 				System.out.println("2. Manejo de catalogo de usuarios");
-				System.out.println("3. Registrar un nuevo prestamo de libro");
+				System.out.println("3. Préstamos");
 				System.out.println("4. Salir");
 				
 				int choice = scanner.nextInt();
@@ -46,33 +46,41 @@ public class Principal {
 							System.out.println("\nInserta el titulo del libro");
 							String titulo = scanner.nextLine();
 							System.out.println("\nInserta el nombre del autor del libro a insertar");
-							String autor = scanner.nextLine();							
-							Inventario.insertarLibro(titulo,autor);
+							String autor = scanner.nextLine();
+							//generar isbn aleatorio
+							long isbn = (long)((Math.random() * 9999999999999L) + 1000000000000L);
+				        	Inventario.insertarLibro(titulo,autor,isbn);
 							break;
 						case 2:
-							Inventario.obtenerLibros();
+							if(Inventario.obtenerLibros()==0) {
+								System.out.println("No hay libros dados de alta");
+								break;}
 							//ACTUALIZAR LIBRO
 							System.out.println("\nSelecciona el id del libro a actualizar");
-				        	int idISBN = scanner.nextInt();
+				        	long idISBN = scanner.nextLong();
 				        	scanner.nextLine();
 				        	System.out.println("\nTeclea el nuevo titulo del libro ");
 				        	String nTitulo = scanner.nextLine();
 				        	System.out.println("\nTeclea el nuevo autor del libro");
 				        	String nAutor = scanner.nextLine();
-							Inventario.actualizaLibro(nTitulo,nAutor,idISBN);
+				        	if (idISBN >0) {
+				        		Inventario.actualizaLibro(nTitulo,nAutor,idISBN);}
+				        	else {
+				        		System.out.println("\nIngresa un valor valido de Isbn");}
 							break;
 						case 3:
 							//eliminar libro
-							Inventario.obtenerLibros();
+							if(Inventario.obtenerLibros()==0) {
+								System.out.println("No hay libros dados de alta");
+								break;}
 							System.out.println("\nSelecciona el id del libro a eliminar");
-				        	int id = scanner.nextInt();
-				        	System.out.println("ID a eliminar=" +id);
-				        	
-							Inventario.eliminarLibro(id);
+				        	long id = scanner.nextLong();
+				        	if (id >0) {
+				        		Inventario.eliminarLibro(id);}
+				        	else {
+				        		System.out.println("\nIngresa un valor valido de Isbn");}
 							break;
 						case 4:
-							//buscar libro
-							Inventario.obtenerLibros();
 							System.out.println("\n ¿Cuál campo quieres buscar?");
 							System.out.println("\n 1. ISBN");
 							System.out.println("\n 2. Titulo");
@@ -82,7 +90,7 @@ public class Principal {
 				        	switch (opcion3) {
 				        	case 1:
 				        		System.out.println("Ingresa el ISBN");
-				        		int idISBN_ = scanner.nextInt();
+				        		long idISBN_ = scanner.nextLong();
 				        		Inventario.buscarLibro(idISBN_,"", "");
 				        		break;
 				        	case 2:
@@ -124,7 +132,11 @@ public class Principal {
 									Usuarios.insertaUsuario(nombre);
 									break;
 								case 2:
-									Usuarios.obtenerUsuarios();
+									//eliminar usuario
+									if(Usuarios.obtenerUsuarios()==0){
+										System.out.println("\nNo hay usuarios dados de alta");
+										break;
+									};
 									//poner logica para obtener id titulo y autor de scanner
 									System.out.println("\nSelecciona el id del usuario a actualizar");
 						        	int idUsuario = scanner.nextInt();
@@ -135,11 +147,13 @@ public class Principal {
 									break;
 								case 3:
 									//eliminar usuario
-									Usuarios.obtenerUsuarios();
+									if(Usuarios.obtenerUsuarios()==0){
+										System.out.println("\nNo hay usuarios dados de alta");
+										break;
+									};
 									System.out.println("\nSelecciona el id del usuario a eliminar");
 						        	int id = scanner.nextInt();
 						        	System.out.println("ID a eliminar=" +id);
-						        	
 									Usuarios.eliminarUsuario(id);
 									break;
 								case 4:
@@ -187,31 +201,44 @@ public class Principal {
 							case 1:
 								//Registrar un prestamo
 								System.out.println("\nUsuarios:");
-								Usuarios.obtenerUsuarios();
+								//eliminar usuario
+								if(Usuarios.obtenerUsuarios()==0){
+									System.out.println("\nNo hay usuarios dados de alta");
+									break;
+								};
 								System.out.println("\nLibros:");
-								Inventario.obtenerLibros();
+								if(Inventario.obtenerLibros()==0) {
+									System.out.println("No hay libros dados de alta");
+									break;}
+								System.out.println("\nInserta id del libro");
+								long idLibro = scanner.nextLong();
+								if (!Prestamos.consultaDisponibilidadLibro(idLibro)) {
+									System.out.println("\nLibro no disponible :(");
+									break;
+								}
 								System.out.println("\nInserta id del usuario");
 								int idUsu = scanner.nextInt();	
-								System.out.println("\nInserta id del libro");
-								int idLibro = scanner.nextInt();
 								scanner.nextLine();
-								System.out.println("\nInserta la fecha de inicio del prestamo| Formato de fecha: anio-mes-dia ej: 2024-07-11");
-								String fechaIni = scanner.nextLine();
-								System.out.println("fecha=" + fechaIni);
-								System.out.println("\nInserta la fecha de inicio del prestamo| Formato de fecha: anio-mes-dia ej: 2024-07-11");
+								System.out.println("\nInserta la fecha de entrega del prestamo| Formato de fecha: año-mes-dia ej: 2024-07-11");
 								String fechaFin = scanner.nextLine();
-								Prestamos.registrarPrestamo(idLibro,fechaIni,fechaFin,idUsu);
+								Prestamos.registrarPrestamo(idLibro,fechaFin,idUsu);
 								break;
 							case 2:
 								//registrar la devolucion
 								System.out.println("\nUsuarios: ");
-								Usuarios.obtenerUsuarios();
+								//eliminar usuario
+								if(Usuarios.obtenerUsuarios()==0){
+									System.out.println("\nNo hay usuarios dados de alta");
+									break;
+								};
 								System.out.println("\nLibros: ");
-								Inventario.obtenerLibros();
+								if(Inventario.obtenerLibros()==0) {
+									System.out.println("No hay libros dados de alta");
+									break;}
 								System.out.println("\nPrestamos actuales: ");
 								Prestamos.obtenerPrestamos();
 								System.out.println("\nSelecciona el id del libro a devolver");
-					        	int ISBN = scanner.nextInt();
+					        	long ISBN = scanner.nextLong();
 					        	scanner.nextLine();
 					        	//Se toma fecha de hoy para la devolucion
 								LocalDate FechaDevolucion = LocalDate.now();
@@ -225,21 +252,32 @@ public class Principal {
 							case 3:
 								//Buscar prestamos de un usuario
 								System.out.println("\nUsuarios:");
-								Usuarios.obtenerUsuarios();
+								//eliminar usuario
+								if(Usuarios.obtenerUsuarios()==0){
+									System.out.println("\nNo hay usuarios dados de alta");
+									break;
+								};
 								System.out.println("\nSelecciona el id del usuario a buscar");
 					        	int idUsuario_3 = scanner.nextInt();
 					        	scanner.nextLine();
-					        	System.out.println("id_user" + idUsuario_3);
 					        	Prestamos.obtenerPrestamosPorUsuario(idUsuario_3);
 								break;
 							case 4:
 								//Consulta disponibilidad de un libro
 								System.out.println("\nLibros: ");
-								Inventario.obtenerLibros();
+								if(Inventario.obtenerLibros()==0) {
+									System.out.println("No hay libros dados de alta");
+									break;}
 								System.out.println("\n Digita el ID del libro a consultar su disponibilidad");
-					        	int ISBN_4 = scanner.nextInt();
+					        	long ISBN_4 = scanner.nextLong();
 					        	scanner.nextLine();
-					        	Prestamos.consultaDisponibilidadLibro(ISBN_4);
+					        	boolean disponible = Prestamos.consultaDisponibilidadLibro(ISBN_4);
+					        	if (disponible) {
+					        		System.out.println("Libro disponible :)");
+					        	}
+					        	else {
+					        		System.out.println("Libro no disponible :(");
+					        	}
 								break;
 								
 							case 5:

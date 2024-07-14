@@ -14,19 +14,23 @@ public class Usuarios {
             final String ELIMINAR_USUARIO_SQL = "CALL sp_eliminaUsuario(?)";
             CallableStatement statement = connection.prepareCall(ELIMINAR_USUARIO_SQL);
             statement.setInt(1, id);
-            statement.execute();
-            System.out.println("Usuario eliminado exitosamente");
+            int rows=statement.executeUpdate();
+            if(rows>0) {
+            	System.out.println("El usuario se elimino correctamente ");}
+            else {
+            	System.out.println("No fue posible eliminar el usuario");
+            }
         } catch (SQLException e) {
         	System.out.println("Fallo al conectar a la base de datos");
  			e.printStackTrace();
         }
     }
-    public static void obtenerUsuarios() {
+    public static int obtenerUsuarios() {
     	final String OBTENER_USUARIO_SQL = "SELECT * FROM vw_Usuarios";
+      	int nFilas=0; 
     	try(Connection connection = DBConnection.getInstance().getConnection()){
     		CallableStatement statement = connection.prepareCall(OBTENER_USUARIO_SQL);
         	ResultSet rs = statement.executeQuery();
-        	int nFilas=0; 
             while (rs.next()) {
                 System.out.println(rs.getInt(2) + " " + rs.getString(1));
                 nFilas=nFilas+1;
@@ -38,21 +42,25 @@ public class Usuarios {
         	System.out.println("Fallo al conectar a la base de datos");
  			e.printStackTrace();
         }
+    	return nFilas;
     }
     public static void actualizaUsuario(int idUsuario, String nombreUsuario) {
+    	final String ACTUALIZAR_USUARIO_SQL = "CALL sp_actualizaUsuario(?,?)";
     	try(Connection connection = DBConnection.getInstance().getConnection())
         {
-            final String ACTUALIZAR_USUARIO_SQL = "CALL sp_actualizaUsuario(?,?)";
             CallableStatement statement = connection.prepareCall(ACTUALIZAR_USUARIO_SQL); {
             statement.setString(1, nombreUsuario);
             statement.setInt(2, idUsuario);
         	}
-            statement.execute();
-            System.out.println("El usuario se actualizo correctamente ");
-        } catch (SQLException e) {
+            int rows=statement.executeUpdate();
+            if(rows>0) {
+            	System.out.println("El usuario se elimino correctamente ");}
+            else {
+            	System.out.println("No fue posible eliminar el usuario");
+            }
+        }catch (SQLException e) {
         	System.out.println("Fallo al conectar a la base de datos");
- 			e.printStackTrace();
-        }
+			e.printStackTrace();}
     }
 
     public static void insertaUsuario(String nombre) {
