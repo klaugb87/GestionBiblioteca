@@ -24,7 +24,7 @@ public class Prestamos {
 	        }
 	    }
 	    public static void obtenerPrestamos() {
-	    	final String CONSULTAR_PRESTAMOS_ALL_SQL = "CALL sp_consultaPrestamos";
+	    	final String CONSULTAR_PRESTAMOS_ALL_SQL = "SELECT * FROM vw_Prestamos";
 	    	try(Connection connection = DBConnection.getInstance().getConnection();
 	        	Statement st = connection.createStatement();
 	    		CallableStatement statement = connection.prepareCall(CONSULTAR_PRESTAMOS_ALL_SQL)) {
@@ -84,7 +84,6 @@ public class Prestamos {
 	    		CallableStatement statement = connection.prepareCall(VERIFICA_DISPONIBILIDAD)) {
 	    		statement.setInt(1,ISBN);
 	    		ResultSet rs = statement.executeQuery();
-	        	System.out.println(VERIFICA_DISPONIBILIDAD);
 	        	System.out.println("Resultados--->");
 	        	int numFilas=0;
 	        	while (rs.next()) {
