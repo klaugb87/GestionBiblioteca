@@ -6,7 +6,7 @@ titulo varchar(110),
 autor varchar(100),
 ISBN INT AUTO_INCREMENT PRIMARY KEY
 );
-SELECT * FROM INVENTARIO WHERE titulo like '%pobre%';
+SELECT * FROM INVENTARIO;
 
 
 CREATE TABLE USUARIOS(
@@ -28,7 +28,7 @@ CREATE TABLE PRESTAMOS (
 );
 
 SELECT * FROM PRESTAMOS;
-
+/*libros*/
 DELIMITER //
 CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_eliminaLibro`(
 ISBN_2 int)
@@ -37,7 +37,7 @@ DELETE FROM INVENTARIO WHERE ISBN= ISBN_2;
 END//
 DELIMITER ;
 DELIMITER //
-CREATE DEFINER=`root`@`localhost` PROCEDURE `inserta_libro`(
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_inserta_libro`(
 titulo_2 char(110), 
     autor_2 char(100))
 BEGIN
@@ -58,13 +58,10 @@ END//
 //
 DELIMITER ;
 
-DELIMITER //
-CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_muestraLibros`(
-)
-BEGIN
-SELECT * FROM INVENTARIO;
-END //
-DELIMITER ;
+CREATE VIEW vw_Libros AS 
+(SELECT * FROM INVENTARIO);
+
+/*usuarios*/
 DELIMITER //
 CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_insertaUsuario`(
 nombre_n char(180))
@@ -84,13 +81,8 @@ END //
 //
 DELIMITER ;
 
-DELIMITER //
-CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_muestraUsuarios`()
-BEGIN
-SELECT * FROM USUARIOS;
-END //
-//
-DELIMITER ;
+CREATE VIEW vw_Usuarios AS 
+(SELECT * FROM USUARIOS);
 
 DELIMITER //
 CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_eliminaUsuario`(
@@ -101,6 +93,7 @@ END //
 //
 DELIMITER ;
 
+/*prestamos*/
 DELIMITER //
 CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_registraPrestamo`(
 idISBN_n int,
@@ -150,11 +143,8 @@ END //
 //
 DELIMITER ;
 
-CREATE VIEW vw_Libros AS 
-(SELECT * FROM INVENTARIO);
-
-CREATE VIEW vw_Usuarios AS 
-(SELECT * FROM USUARIOS);
-
 CREATE VIEW vw_Prestamos AS 
 (SELECT * FROM PRESTAMOS);
+
+
+
